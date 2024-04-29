@@ -15,6 +15,17 @@ builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
+builder.Services.AddCors(options =>
+            {
+
+                options.AddPolicy("CorsPolicy", policy =>
+                {
+                    policy.AllowAnyMethod().AllowAnyHeader().WithOrigins("*");
+                    //policy.AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:3000");
+                });
+
+            });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.   ~~~ OR MIDDLEWARE
@@ -26,6 +37,8 @@ if (app.Environment.IsDevelopment())
 
 // app.UseAuthorization();
 app.MapControllers();
+
+app.UseCors("CorsPolicy");
 
 // app.UseHttpsRedirection();
 
@@ -47,6 +60,7 @@ catch (Exception ex)
     var logger = servises.GetRequiredService<ILogger<Program>>();
     logger.LogError(ex, "An error occurd during migration!");
 }
+
 
 
 app.Run();
