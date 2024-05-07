@@ -15,7 +15,7 @@ namespace Application
 
         public class Command : IRequest<Result<Unit>>
         {
-            public int Id { get; set; }
+            public Guid Id { get; set; }
         }
 
         public class Handler : IRequestHandler<Command, Result<Unit>>

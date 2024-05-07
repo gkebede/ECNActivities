@@ -42,8 +42,8 @@ namespace Application.Activities
             public async Task Handle(Command request, CancellationToken cancellationToken)
             {
 
-                    // int id = _context.Activities.Max(a => a.Id)+1;
-                    //  request.Activity.Id = id;
+                    //   int id = _context.Activities.Max(a => a.Id)+1;
+                    //    request.Activity.Id = id;
 
                      _context.Activities.Add(request.Activity);
                      await _context.SaveChangesAsync();
