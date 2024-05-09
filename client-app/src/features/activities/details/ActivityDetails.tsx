@@ -14,7 +14,8 @@
 interface Props {
   activity: Activity,
   canceleSelectActivity:() => void,
-  openForm : (id: string) => void
+  openForm : (id: string) => void,
+
 }
 
 export default function ActivityDetails({ canceleSelectActivity, activity, openForm }: Props) {
@@ -23,7 +24,9 @@ export default function ActivityDetails({ canceleSelectActivity, activity, openF
 
     <>
     <Card fluid>
-    <Image src={`/assets/categoryImages/${activity.category}.jpg`} className="visible content"  />
+      
+    <Image src={`/assets/categoryImages/${activity.category}.jpg`} className="visible content"
+     alt={`/assets/categoryImages/${activity.category}.jpg`}  />
     <Card.Content>
         <Card.Header>{activity.title}</Card.Header>
         <Card.Meta>
