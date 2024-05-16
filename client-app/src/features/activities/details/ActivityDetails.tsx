@@ -1,7 +1,7 @@
 // import { observer } from "mobx-react-lite";
 // import React, { useEffect, useState } from "react";
 // import { Link, NavLink, useParams } from "react-router-dom";
- import { Button, Card, Grid, Image } from "semantic-ui-react";
+import { Button, Card, Image } from "semantic-ui-react";
 // import { updateQualifiedName } from "typescript";
 // import LoadingComponent from "../../../app/layout/LoadingComponent";
 // import { useStore } from "../../../app/stores/store";
@@ -9,17 +9,24 @@
 // import ActivityDetailedHeader from "./ActivityDetailedHeader";
 // import ActivityDetailedInfo from "./ActivityDetailedInfo";
 // import ActivityDetailedSidebar from "./ActivityDetailedSidebar";
- import { Activity } from "../../../app/models/activity";
+// import { Activity } from "../../../app/models/activity";
+import { useStore } from "../../../app/stores/store";
+import { observer } from "mobx-react-lite";
+//import LoadingComponent from "../../../app/layout/LoadingComponent";
 
-interface Props {
-  activity: Activity,
-  canceleSelectActivity:() => void,
-  openForm : (id: string) => void,
+// interface Props {
+//   activity: Activity,
+//   canceleSelectActivity:() => void,
+//   openForm : (id: string) => void,
+// }
 
-}
+export default observer(function ActivityDetails(){
+ // export default function ActivityDetails( { canceleSelectActivity, activity, openForm }: Props) {
 
-export default function ActivityDetails({ canceleSelectActivity, activity, openForm }: Props) {
+ const {activityStore} = useStore();
+ const {selectedActivity: activity, openForm, cancelSelectedActivity } = activityStore;
 
+ if(!activity) return;
   return (
 
     <>
@@ -41,17 +48,17 @@ export default function ActivityDetails({ canceleSelectActivity, activity, openF
             {  
              activity &&
               <Button onClick={() => openForm(activity.id)}  basic color='blue' content='Edit' />}
-            <Button  basic color='grey' onClick={canceleSelectActivity} content='Cancel' />
+            <Button  basic color='grey' onClick={cancelSelectedActivity} content='Cancel' />
         </Button.Group>
     </Card.Content>
 </Card>
 
 </>
 
-  )
+  )})
 
-
-{/* 
+//{
+  /* 
   //const { activityStore } = useStore();
   //const [ids , setIds] = useState( '');
   //const { selectedActivity: activity, loadActivity, loadingInitial } = activityStore;
@@ -78,8 +85,8 @@ export default function ActivityDetails({ canceleSelectActivity, activity, openF
   <Grid.Column width={6}  >
     <ActivityDetailedSidebar />
   </Grid.Column>
-</Grid> */}
+</Grid> */
 
   
 
-}
+
