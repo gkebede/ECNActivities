@@ -10,10 +10,9 @@ import { StoreContext, store } from './app/stores/store'
 
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-   <React.StrictMode>
+  // <React.StrictMode>
       <StoreContext.Provider value={store}>
           <App />
       </StoreContext.Provider>
-   
-   </React.StrictMode>,
+  // </React.StrictMode>,
 )
