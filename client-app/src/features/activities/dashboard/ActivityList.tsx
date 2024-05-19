@@ -6,9 +6,10 @@ import { observer } from "mobx-react-lite";
 
 export default observer(function ActivityList(){
      const {activityStore} = useStore();
-     const {deleteActivity, activities, loading} = activityStore;
+     const {deleteActivity,getActivites, loading} = activityStore;
      const [target, setTarget] = useState('');
 
+     //: SyntheticEvent<HTMLButtonElement>
      function handleActivityDelete(e: SyntheticEvent<HTMLButtonElement>, id: string){
        setTarget(e.currentTarget.name);
        deleteActivity(id)
@@ -16,13 +17,11 @@ export default observer(function ActivityList(){
  
     return(
        
-        <div>
-            {activities.map(activity => (
         <Segment>
-         
-            
+           
         <Item.Group divided>
-            {/* {activities.map(activity => ( */}
+      
+             {getActivites().map(activity => ( 
                 <Item key={activity.id}>
                     <Item.Content>
                         <Item.Header as='a'>{activity.title}</Item.Header>
@@ -44,16 +43,17 @@ export default observer(function ActivityList(){
                         </Item.Extra>
                     </Item.Content>
                 </Item>
-            {/* ))} */}
+             )) } 
         </Item.Group>
-
-        
-        
     </Segment>
-    ))}
-    </div>
+    
     )
+
+   
 })
+
+
+   
 
 
 

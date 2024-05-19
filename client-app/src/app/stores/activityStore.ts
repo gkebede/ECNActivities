@@ -5,60 +5,64 @@
 // import { v4 as uuid } from 'uuid';
 // // import { format } from "date-fns";
 
-import { makeAutoObservable, runInAction } from "mobx";
+import {  makeAutoObservable, runInAction } from "mobx";
 import { Activity } from "../models/activity";
 import agent from "../api/agent";
 import {v4 as uuid} from 'uuid';
-import axios from "axios";
-
-
 
 
  export default class ActivityStore   {
+          // MODEFIED/obsolete/ varuables start 
        activities: Activity[] = [];  //=== get activitiesByDate()
        activity: Activity | undefined = undefined;  //=== get activitiesByDate()
+        // MODEFIED/obsolete/ varuables end
+         
        activityRegistry = new Map<string, Activity>();
        selectedActivity: Activity | undefined = undefined;
        //     defending mecanisms 
        editMode = false;   
        loading = false;
-       loadingInitial = false;
+       loadingInitial = true;
 
        constructor() { makeAutoObservable(this);}
 
+       getActivites  =() => {
+        return Array.from (this.activityRegistry.values()).sort((a,b) =>
+            Date.parse(a.date) - Date.parse(b.date));
+       }
+
               // 1   =========   initializing     activities   
        loadActivities = async () => {
-       //this.setloadingInitial(true); 
-       try  {
-                   // const output =  axios.get<Activity[]>("http://localhost:5000/api/activities/");// 
-             const activities = await agent.Activities.list();
-             
-             console.log(activities)
-             console.log(this.activities)
-             //this.activities = []
-             runInAction(() => {
-                           activities.forEach(activity => {
-                                   activity.date = activity.date.split('T')[0];
-                                   this.activities.push(activity)
-                          console.log(activity.category, "pushed")
 
-                           })
-                           // this.setloadingInitial(false); 
-                          
-                     })}catch (error) {
-                             console.log(error)
-                             runInAction(() => {
-                    // this.setloadingInitial(false); 
-                             })
-              };
+                try {
+                  const activities = await agent.Activities.list();
+                  runInAction(() => {
+                  //  this.activities =[];
+                    
+                    activities.forEach(activity => {
+                      activity.date = activity.date.split('T')[0];
+                    //this.activities =  [...this.activities, activity] //===this.activities.push(activity)
+                    this.activityRegistry.set(activity.id, activity)
+                    
+                       })
+                       console.log(this.activities, "After adding")
+                  })
+                  this.setLoadingInitial(false);
+                } catch (error) {
+                  console.log(error)
+                  this.setLoadingInitial(false);
+                }
        }
-     setloadingInitial = (state: boolean) => {
+
+       //Action to  change (observed) observable values
+     setLoadingInitial = (state: boolean) => {
         this.loadingInitial = state;
      }
 
        // 2   ========= select an  Activity   
      selectActivity = async (id: string) => {
-        this.selectedActivity = this.activities.find(activity => activity.id === id )
+        //this.selectedActivity = this.activities.find(activity => activity.id === id )
+        this.selectedActivity = this.activityRegistry.get(id)
      }
 
      // 3   ========= canciling seleced Activity
@@ -83,7 +87,8 @@ import axios from "axios";
       try {
         await agent.Activities.create(activity);
         runInAction(() => {
-          this.activities.push(activity);
+          //this.activities.push(activity);
+          this.activityRegistry.set(activity.id, activity)
           this.selectedActivity = activity;
           this.editMode= false;
           this.loading = false;
@@ -102,7 +107,8 @@ import axios from "axios";
       try {
         await agent.Activities.update(activity);
         runInAction(() => {
-         this.activities =[...this.activities.filter(activity => activity.id !== activity.id), activity];
+         //this.activities =[...this.activities.filter(activity => activity.id !== activity.id), activity];
+         this.activityRegistry.set(activity.id, activity)
          this.selectedActivity = activity;
           this.editMode= false;
           this.loading = false;
@@ -121,8 +127,9 @@ import axios from "axios";
      try {
        await agent.Activities.delete(id);
        runInAction(() => {
-        this.activities =[...this.activities.filter(activity => activity.id !== activity.id)];
-        if(this.selectedActivity?.id === id) this.cancelSelectedActivity;
+        //this.activities =[...this.activities.filter(activity => activity.id !== activity.id)];
+        this.activityRegistry.delete(id)
+        if(this.selectedActivity?.id === id) this.cancelSelectedActivity();
          this.loading = false;
        });
      } catch (error) {
@@ -134,4 +141,9 @@ import axios from "axios";
 
      }
 }
+
+
+
+
+
 
