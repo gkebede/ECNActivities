@@ -1,32 +1,25 @@
-// import { observer } from "mobx-react-lite";
-// import React, { useEffect, useState } from "react";
-// import { Link, NavLink, useParams } from "react-router-dom";
+ 
 import { Button, Card, Image } from "semantic-ui-react";
-// import { updateQualifiedName } from "typescript";
-// import LoadingComponent from "../../../app/layout/LoadingComponent";
-// import { useStore } from "../../../app/stores/store";
-// import ActivityDetailedChat from "./ActivityDetailedChat";
-// import ActivityDetailedHeader from "./ActivityDetailedHeader";
-// import ActivityDetailedInfo from "./ActivityDetailedInfo";
-// import ActivityDetailedSidebar from "./ActivityDetailedSidebar";
-// import { Activity } from "../../../app/models/activity";
 import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
-//import LoadingComponent from "../../../app/layout/LoadingComponent";
+import { Link, useParams } from "react-router-dom";
+import { useEffect } from "react";
+import LoadingComponent from "../../../app/layout/LoadingComponent";
 
-// interface Props {
-//   activity: Activity,
-//   canceleSelectActivity:() => void,
-//   openForm : (id: string) => void,
-// }
-
+ 
 export default observer(function ActivityDetails(){
- // export default function ActivityDetails( { canceleSelectActivity, activity, openForm }: Props) {
 
  const {activityStore} = useStore();
- const {selectedActivity: activity, openForm, cancelSelectedActivity } = activityStore;
+ const {selectedActivity: activity, loadActivity, loadingInitial} = activityStore;
+ const {id} = useParams();
 
- if(!activity) return;
+ useEffect( () => {
+    if(id) {
+        loadActivity(id)
+    } 
+ }, [id, loadActivity]);
+
+  if(loadingInitial || !activity) return <LoadingComponent  content="Loading..."/>;
   return (
 
     <>
@@ -45,47 +38,16 @@ export default observer(function ActivityDetails(){
     </Card.Content>
     <Card.Content extra>
         <Button.Group widths='2'>
-            {  
-             activity &&
-              <Button onClick={() => openForm(activity.id)}  basic color='blue' content='Edit' />}
-            <Button  basic color='grey' onClick={cancelSelectedActivity} content='Cancel' />
+            
+              <Button as={Link} to={`/manage/${activity.id}`} basic color='blue' content='Edit' />
+            <Button as={Link} to={`/activities`}  basic color='grey' content='Cancel' />
         </Button.Group>
     </Card.Content>
 </Card>
 
 </>
-
   )})
 
-//{
-  /* 
-  //const { activityStore } = useStore();
-  //const [ids , setIds] = useState( '');
-  //const { selectedActivity: activity, loadActivity, loadingInitial } = activityStore;
-  //const {id} = useParams();
-
-  // useEffect( ()=> {
-
-  //   setIds(id!);
-     
-  //    if(id) loadActivity(id);
-
-    
-    
-  // }, [id, loadActivity]);
-
-  // if (!activity ) return < LoadingComponent content={"Loading..."} />;
-
-<Grid >
-  <Grid.Column width={10} >
-    <ActivityDetailedHeader activity={activity} />
-    <ActivityDetailedInfo activity={activity} />
-    <ActivityDetailedChat />
-  </Grid.Column>
-  <Grid.Column width={6}  >
-    <ActivityDetailedSidebar />
-  </Grid.Column>
-</Grid> */
 
   
 

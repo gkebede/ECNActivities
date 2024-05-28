@@ -1,36 +1,30 @@
-import { useEffect} from "react";
 import { Container } from "semantic-ui-react";
+
 import NavBar from "./NavBar";
-import ActivityDashboard from "../../features/activities/dashboard/ActivitiesDashboard";//
-import { useStore } from "../stores/store";
-import LoadingComponent from "./LoadingComponent";
 import { observer } from "mobx-react-lite";
+import { Outlet, useLocation } from "react-router-dom";
+import HomePage from "../../features/home/HomePage";
+
 
 
 // to get more idea about Generics look ERROR HANDLING
 
-function  App() {
+function App() {
+  const location = useLocation();
+  // const { commonStore: {token, setAppLoaded, appLoaded}, userStore: {getUser} } = useStore();
+  // const { commonStore, userStore} = useStore();
 
-  const{activityStore} = useStore()
- // const location = useLocation();
- // const { commonStore: {token, setAppLoaded, appLoaded}, userStore: {getUser} } = useStore();
- // const { commonStore, userStore} = useStore();
-
-  
-useEffect(() => {
-  activityStore.loadActivities();
-},[activityStore]);
-
-if(activityStore.loadingInitial)  return <LoadingComponent content="Loading..." />
-
- return(
-   <>
-     <NavBar  /> 
-    <Container style={{ marginTop: '6em'}}>
-        <ActivityDashboard />
-    </Container>
-   </>
- )
+  return (
+    <>
+      {location.pathname === '/' ? <HomePage />  : (
+        <>
+          <Container style={{ marginTop: '6em' }}>
+            <Outlet />
+          </Container>
+        </>
+      )}
+    </>
+  )
 }
 
 

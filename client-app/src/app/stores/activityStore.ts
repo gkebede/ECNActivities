@@ -1,10 +1,3 @@
-// //import React from "react";
-// import { makeAutoObservable, runInAction, values } from "mobx";
-// import agent from "../api/agent";
-// // import { Result } from "../models/result";
-// import { v4 as uuid } from 'uuid';
-// // import { format } from "date-fns";
-
 import {  makeAutoObservable, runInAction } from "mobx";
 import { Activity } from "../models/activity";
 import agent from "../api/agent";
@@ -21,8 +14,9 @@ import {v4 as uuid} from 'uuid';
        selectedActivity: Activity | undefined = undefined;
        //     defending mecanisms 
        editMode = false;   
-       loading = false;
-       loadingInitial = true;
+       loading = false;               //  if (!IsPostBack){}
+       loadingInitial = false;        //   if (IsPostBack){}
+    
 
        constructor() { makeAutoObservable(this);}
 
@@ -31,21 +25,18 @@ import {v4 as uuid} from 'uuid';
             Date.parse(a.date) - Date.parse(b.date));
        }
 
-              // 1   =========   initializing     activities   
-       loadActivities = async () => {
+       getActivity  =(id: string) => {
+        return this.activityRegistry.get(id);
+       }
 
+              // 1.A   =========   initializing     activities && setting activities in the MAP OBJECT
+       loadActivities = async () => {
+        this.setLoadingInitial(true);
                 try {
                   const activities = await agent.Activities.list();
-                  runInAction(() => {
-                  //  this.activities =[];
-                    
-                    activities.forEach(activity => {
-                      activity.date = activity.date.split('T')[0];
-                    //this.activities =  [...this.activities, activity] //===this.activities.push(activity)
-                    this.activityRegistry.set(activity.id, activity)
-                    
-                       })
-                       console.log(this.activities, "After adding")
+
+                  activities.forEach(activity => {
+                    this.setActivity(activity)
                   })
                   this.setLoadingInitial(false);
                 } catch (error) {
@@ -54,33 +45,45 @@ import {v4 as uuid} from 'uuid';
                 }
        }
 
-       //Action to  change (observed) observable values
+        // 1.A   =========   initializing     activitY && setting activitY in the MAP OBJECT
+       loadActivity = async (id: string) => {
+        let activity = this.getActivity(id)
+        if(activity){
+          this.setSelectedActivity(activity)
+        //   this.selectedActivity = activity;
+           return activity;
+          }
+        else{
+          this.setLoadingInitial(true)
+          try {
+            activity = await agent.Activities.details(id);
+            this.setActivity(activity);
+             // this.selectedActivity = activity;
+            this.setSelectedActivity(activity)
+            this.setLoadingInitial(false);
+            return activity;
+          } catch (error) {
+            console.log(error);
+            this.setLoadingInitial(false)
+          }
+        }
+
+        return activity;
+       }
+
+     private  setActivity = (activity: Activity) => {
+      activity.date = activity.date.split('T')[0];
+       //this.activities =  [...this.activities, activity] //===this.activities.push(activity)
+       this.activityRegistry.set(activity.id, activity)
+       }
+
+       private setSelectedActivity(activity: Activity) {
+          this.selectedActivity = activity;
+       }
+
      setLoadingInitial = (state: boolean) => {
         this.loadingInitial = state;
      }
-
-       // 2   ========= select an  Activity   
-     selectActivity = async (id: string) => {
-        //this.selectedActivity = this.activities.find(activity => activity.id === id )
-        this.selectedActivity = this.activityRegistry.get(id)
-     }
-
-     // 3   ========= canciling seleced Activity
-     cancelSelectedActivity = () => {
-        this.selectedActivity = undefined;
-     }
-
-     // 4   ========= opening a page if there is seleced Activity
-     openForm=(id?:string)=> {
-       id?this.selectActivity(id):this.cancelSelectedActivity()  
-       this.editMode = true; //to open/close edit or create page
-     }
-
-     // 5   ========= closing a page if there is no Activity
-     closeForm =() => {
-       this.editMode = false;
-     }
-
      createActivity = async(activity: Activity) => {
       this.loading = true;
       activity.id = uuid();
@@ -129,7 +132,6 @@ import {v4 as uuid} from 'uuid';
        runInAction(() => {
         //this.activities =[...this.activities.filter(activity => activity.id !== activity.id)];
         this.activityRegistry.delete(id)
-        if(this.selectedActivity?.id === id) this.cancelSelectedActivity();
          this.loading = false;
        });
      } catch (error) {
@@ -138,12 +140,31 @@ import {v4 as uuid} from 'uuid';
          this.loading = false;
        })
      }
-
      }
 }
 
+     /*
+     
+    //    // 2   ========= select an  Activity   
+    //  selectActivity = async (id: string) => {
+    //     //this.selectedActivity = this.activities.find(activity => activity.id === id )
+    //     this.selectedActivity = this.activityRegistry.get(id)
+    //  }
 
+    //  // 3   ========= canciling seleced Activity
+    //  cancelSelectedActivity = () => {
+    //     this.selectedActivity = undefined;
+    //  }
 
+    //  // 4   ========= opening a page if there is seleced Activity
+    //  openForm=(id?:string)=> {
+    //    id?this.selectActivity(id):this.cancelSelectedActivity()  
+    //    this.editMode = true; //to open/close edit or create page
+    //  }
 
-
-
+    //  // 5   ========= closing a page if there is no Activity
+    //  closeForm =() => {
+    //    this.editMode = false;
+    //  }
+*/
+    
