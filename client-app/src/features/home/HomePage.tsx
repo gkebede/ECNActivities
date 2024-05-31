@@ -18,8 +18,10 @@ export default observer ( function HomePage() {
                     <Image size='massive' src='/assets/logo.png' alt='logo' style={{ marginBottom: 12}} />
                     Reactivities
 
-                    <h3>Go to <Link to='/activities' style={{color:'red', font:'22'}}>Activties</Link></h3>
+                    {/* <h1>Go to <Link to='/activities' style={{color:'red', font:'22'}}>Activties</Link></h1> */}
                 </Header>
+
+                <Header as='h2'  inverted content='Welcome to ECN-Activities'/>
 
 
                 {/* {

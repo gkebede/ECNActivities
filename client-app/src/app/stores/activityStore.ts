@@ -5,10 +5,11 @@ import {v4 as uuid} from 'uuid';
 
 
  export default class ActivityStore   {
-          // MODEFIED/obsolete/ varuables start 
+ 
+  //#region-MODEFIED/obsolete/ varuables start 
        activities: Activity[] = [];  //=== get activitiesByDate()
        activity: Activity | undefined = undefined;  //=== get activitiesByDate()
-        // MODEFIED/obsolete/ varuables end
+  //#endregion-MODEFIED/obsolete/ varuables end 
          
        activityRegistry = new Map<string, Activity>();
        selectedActivity: Activity | undefined = undefined;
@@ -20,12 +21,23 @@ import {v4 as uuid} from 'uuid';
 
        constructor() { makeAutoObservable(this);}
 
-       getActivites  =() => {
+      get activitiesByDate ()  {
         return Array.from (this.activityRegistry.values()).sort((a,b) =>
             Date.parse(a.date) - Date.parse(b.date));
        }
+        
+       get groupedActivities ()  {
+        return Object.entries(
+                this.activitiesByDate.reduce((activities, currentActivity) => {
+                //const date = activity.date!.toString().split('T')[0];
+                const date = currentActivity.date;
+                activities[date] = activities[date] ? [...activities[date], currentActivity] : [currentActivity];
+                return activities;
+            }, {} as { [key: string]: Activity[] })
+        )
+    }
 
-       getActivity  =(id: string) => {
+       getActivity  =(id: string) : Activity | undefined => {
         return this.activityRegistry.get(id);
        }
 

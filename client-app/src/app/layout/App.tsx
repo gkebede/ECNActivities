@@ -16,10 +16,11 @@ function App() {
 
   return (
     <>
+      <NavBar />
       {location.pathname === '/' ? <HomePage />  : (
         <>
           <Container style={{ marginTop: '6em' }}>
-            <Outlet />
+           <Outlet />       {/*  Outlet === App and its children[]  */}
           </Container>
         </>
       )}
@@ -34,7 +35,7 @@ export default observer(App)
 
 //1/ ---COMPONENTS start HERE-----
 // NavBar  => App
-// => App => ActivityDashboard } -ActivityList , ActivityDetails, ActivityForm
+// => App => ActivityDashboard } -ActivityList , ActivityListItem, ActivityForm
 //1/ ----COMPONENTS end HERE-----
 
 
