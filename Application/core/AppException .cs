@@ -1,5 +1,6 @@
-namespace Application.Activities.core
+namespace Application.core
 {
+    
     public class AppException
     {
         public int StatusCode { get; set; }

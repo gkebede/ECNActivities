@@ -7,7 +7,6 @@ import ServerError from "../../features/errors/ServerError";
 import TestErrors from "../../features/errors/TestError";
  import LoginForm from "../../features/users/LoginForm";
 import App from "../layout/App";
-import HomePage from "../../features/home/HomePage";
 
 
  const routes : RouteObject[] = [
@@ -29,4 +28,4 @@ import HomePage from "../../features/home/HomePage";
     }
 ]
 
-export const router = createBrowserRouter(routes);
+export const router = createBrowserRouter(routes); 

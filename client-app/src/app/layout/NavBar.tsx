@@ -12,8 +12,7 @@ export default function NavBar() {
                 </Menu.Item>
 
                 <Menu.Item   as={NavLink}  to='/activities'    name="Activities" />
-
-                <Menu.Item     name="Errors" />
+                <Menu.Item   as={NavLink}  to='/errors'    name="Errors" />
 
                 <Menu.Item position="right" >
                     <Dropdown pointing='top left'  >

@@ -4,6 +4,7 @@ import NavBar from "./NavBar";
 import { observer } from "mobx-react-lite";
 import { Outlet, useLocation } from "react-router-dom";
 import HomePage from "../../features/home/HomePage";
+import { ToastContainer } from "react-toastify";
 
 
 
@@ -16,6 +17,7 @@ function App() {
 
   return (
     <>
+     <ToastContainer position="bottom-right" hideProgressBar theme="colored" />
       <NavBar />
       {location.pathname === '/' ? <HomePage />  : (
         <>
@@ -34,6 +36,8 @@ export default observer(App)
 /*
 
 //1/ ---COMPONENTS start HERE-----
+
+// dotnet watch --no-hot-reload
 // NavBar  => App
 // => App => ActivityDashboard } -ActivityList , ActivityListItem, ActivityForm
 //1/ ----COMPONENTS end HERE-----

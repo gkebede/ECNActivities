@@ -1,5 +1,5 @@
 
-// import CommonStore from "./commonStore";
+ import CommonStore from "./commonStore";
 // import ModalStore from "./modalStore";
 // import UserStore from "./userStore";
 // import ProfileStore from "./ProfileStore";
@@ -10,11 +10,13 @@ import  ActivityStore  from "./activityStore";
 
  interface Store {
     activityStore : ActivityStore;
+    commonStore : CommonStore;
 }
 
 // The states (value)
 export const store : Store = {
     activityStore : new ActivityStore(),
+    commonStore : new CommonStore(),
 }
 
 // state provider (context)
