@@ -1,6 +1,5 @@
 using API.Extensions;
-using Application.Activities;
-using Application.core;
+using API.Middleware;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
@@ -19,8 +18,10 @@ builder.Services.AddApplicationservices(builder.Configuration);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.   ~~~ OR MIDDLEWARE
+app.UseMiddleware<ExceptionMiddleware>();
 if (app.Environment.IsDevelopment())
 {
+    //app.UseDeveloperExceptionPage();
     app.UseSwagger();
     app.UseSwaggerUI();
     
@@ -33,7 +34,7 @@ app.UseCors("CorsPolicy");
 
 // app.UseHttpsRedirection();
 
-//*** added codes to migrate and seed data to the necessary tables
+//*** add codes to migrate and seed data to the necessary tables
 using var scope = app.Services.CreateScope();  //the whole injected services are availabel here 
 
 var servises = scope.ServiceProvider;  //from whole injected services pick desire service
