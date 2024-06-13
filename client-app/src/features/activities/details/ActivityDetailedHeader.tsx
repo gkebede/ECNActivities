@@ -1,4 +1,4 @@
-import { format } from 'date-fns';
+//import { format } from 'date-fns';
 import { observer } from 'mobx-react-lite';
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
@@ -51,7 +51,7 @@ export default observer (function ActivityDetailedHeader({activity}: Props) {
                                     content={activity.title}
                                     style={{color: 'white'}}
                                 />
-                                <p>{format(activity.date!, 'dd MMM yyyy h:mm aa ')}</p>
+                                {/* <p>{format(activity.date!, 'dd MMM yyyy h:mm aa ')}</p> */}
                                 <p>
                                     Hosted by <strong>Bob</strong>
                                 </p>

@@ -15,30 +15,29 @@
 // import MyDateInput from '../../../app/common/form/MyDateInput';
 
 
-// // if u want give identical name for a variable on a given page u 
 
-// // can give any randem name for the varible that we passing down as a Props
-
-// import React, { ChangeEvent, useState } from 'react';
 import { Button, Form, Segment } from "semantic-ui-react";
-import { Activity } from '../../../app/models/activity';
-import { ChangeEvent, SyntheticEvent, useState } from "react";
+//import { Activity } from '../../../app/models/activity';
+import { SyntheticEvent, useEffect, useState } from "react";
+import { useStore } from "../../../app/stores/store";
+import { observer } from "mobx-react-lite";
+import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
+import { Activity } from "../../../app/models/activity";
+import LoadingComponent from "../../../app/layout/LoadingComponent";
+import { v4 as uuid } from "uuid";
 
-interface Props {
-    activity: Activity | undefined,
-    closeForm : () => void,
-    createOrEdit : (activity: Activity) => void,
-    submitting: boolean
-}
 
-export default function ActivityForm({
-    activity: selectedActivity,
-    closeForm, createOrEdit, submitting} : Props) {
+export default observer(function ActivityForm() {
+    //var activity = await _context.Activities.FindAsync(request.Activity.Id);
+    // activity === selectedActivity --- if(selectedActivity === null or undefined)=>return; 
+    // else -set- the selectedActivity to the incoming object i.e = {id:'', title:'', ...}
 
-  //var activity = await _context.Activities.FindAsync(request.Activity.Id);
-  // activity === selectedActivity --- if(selectedActivity === null or undefined)=>return; 
-  // else -set- the selectedActivity to the incoming object i.e = {id:'', title:'', ...}
-    const initialState  =  selectedActivity?? {
+    const { activityStore } = useStore();
+    const {createActivity, updateActivity,loading, loadActivity, loadingInitial } = activityStore;
+    const { id } = useParams();
+    const navigate = useNavigate();
+
+    const [activity, setActivity] = useState<Activity>({
         id: '',
         title: '',
         category: '',
@@ -46,151 +45,48 @@ export default function ActivityForm({
         date: '',
         city: '',
         venue: ''
-    }
+    });
 
-      const [activity, setActivity] = useState(initialState);
 
-    function handleSubmit() {
-        createOrEdit(activity);
-    }
+    useEffect(() => {
+        if(id) {
+            loadActivity(id).then(activity => setActivity(activity!))
+        }
+    }, [id, loadActivity]);
 
     
 
+    function handleSubmit() {
+        if(!activity.id){
+         activity.id = uuid();
+         createActivity(activity).then(() => navigate(`/activities/${activity.id}`))
+        }else{
+            updateActivity(activity).then(() => navigate(`/activities/${activity.id}`))
+        }
+       // activity.id ? updateActivity(activity) : createActivity(activity);
+    }
+
     //function handleInputChange(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-      //  const { name, value } = event.target.name;  }
+    //  const { name, value } = event.target;  }
     function handleInputChange(event: SyntheticEvent<HTMLInputElement | HTMLTextAreaElement>) {
         const { name, value } = event.currentTarget;
         setActivity({ ...activity, [name]: value })
     }
 
-    
-
+    if(loadingInitial) <LoadingComponent content="Loadding activity..." />
     return (
-        
+
         <Segment clearing>
             <Form autoComplete='off' onSubmit={handleSubmit}>
                 <Form.Input placeholder='Title' value={activity.title} name='title' onChange={handleInputChange} />
                 <Form.TextArea placeholder='Description' value={activity.description} name='description' onChange={handleInputChange} />
                 <Form.Input placeholder='Category' value={activity.category} name='category' onChange={handleInputChange} />
-                <Form.Input type='Date' placeholder='Date' value={activity.date} name='date' onChange={handleInputChange} />
+                <Form.Input type="date" placeholder='Date' value={activity.date} name='date' onChange={handleInputChange} />
                 <Form.Input placeholder='City' value={activity.city} name='city' onChange={handleInputChange} />
                 <Form.Input placeholder='Venue' value={activity.venue} name='venue' onChange={handleInputChange} />
-                <Button loading={submitting} onClick={handleSubmit} floated='right' positive type='submit' content='Submit' />
-                <Button  floated='right' onClick={closeForm} type='button' content='Cancel' />
+                <Button loading={loading} floated='right' positive type='submit' content='Submit' />
+                <Button as={Link} to={`/activities`} floated='right' type='button' content='Cancel' />
             </Form>
         </Segment>
     )
-}
-
-
-// export default observer(function ActivityForm() {
-
-//     const { activityStore } = useStore();
-//     const { selectedActivity, createActivity, 
-//        loadActivity, updateActivity, loading } = activityStore;
-//     const navigate = useNavigate();
-
-//     const { id } = useParams<{id: string}>();
-//     // const history = useNavigate()
-
-//     const initialState = selectedActivity ?? {
-
-//         "id": '',
-//         "title": '',
-//         "date": null,
-//         "description": '',
-//         "category": '',
-//         "city": '',
-//         "venue": ''
-//     }
-
-//     const validationSchema = Yup.object ({
-
-//         title: Yup.string().required('The activity title is required'),
-//         description: Yup.string().required('The activity description is required'),
-//         category: Yup.string().required('Date required').nullable(),
-//         date: Yup.string().required(),
-//         city: Yup.string().required(),
-//         venue: Yup.string().required()
-
-//     })
-
-//     // b/c we want use activity on the page we call selectedActivity on the Props varible
-
-//     const [activity, setActivity] = useState(initialState);
-
-//     useEffect( () => {
-
-//         if(id) loadActivity(id).then( activity => { setActivity(activity!)})
-//     }, [id, loadActivity])
-
-//     function handleSubmit() {
-
-//         if(activity.id.length === 0) {
-//             let newActivity = {
-//                 ...activity,
-//                 id: uuid()
-//             };
-
-//             // createActivity(newActivity).then( () => {
-//             //     history(`/activities/${newActivity.id}`)
-//             // })
-//         }
-//     }
-
-
-
-//     if (activityStore.loadingInitial) return <LoadingComponent content='Loading activity... ' />
-
-//     return (
-
-
-//         <Segment clearing>
-
-//             <Header content='Activity Details' sub color='teal' />
-
-//             <Formik 
-//             validationSchema={validationSchema}
-//             enableReinitialize 
-//             initialValues={activity}
-//             onSubmit={(value) => console.log(value)}>
-//                 {({ handleSubmit, isValid, isSubmitting, dirty }) => (
-
-//                     // {   activity && 
-
-//                     <Form className='ui form' onSubmit={handleSubmit} autoComplete='off' >
-
-//                         <MyTextInput placeholder='Title' name='title' />
-//                         <MyTextArea rows={3} placeholder= 'Description' name='description' />                          
-//                         <MySelectInput options={categoryOptions} placeholder='Category' name='category'  />             
-//                         <MyDateInput
-//                          placeholderText='date' 
-//                          name='date' 
-//                          showTimeSelect
-//                          timeCaption='time'
-//                          dateFormat='MMM d, yyyy h:mm aa'
-//                          />   
-//                           <Header content='Location Details' sub color='teal' />
-//                         <MyTextInput placeholder='City' name='city' />
-//                         <MyTextInput placeholder= 'Venue' name='venue' />                       
-
-//                         <Button
-//                         disabled={ isSubmitting || !dirty || !isValid}
-//                          loading={loading} content='Submit' type='submit' floated='right' positive />
-//                         <Button floated='right' content='Cancel' type='button' as={Link} to={'/activities'} />
-
-
-//                     </Form>
-
-//                 )}
-//             </Formik>
-
-
-
-//         </Segment>
-
-
-
-// )
-
-// } )
+})

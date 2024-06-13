@@ -27,7 +27,7 @@ export default observer(function ActivityDetailedInfo({activity}: Props) {
                     </Grid.Column>
                     <Grid.Column width={15}>
             <span>
-              {activity.date!.toISOString()}
+              {activity.date}
             </span>
                     </Grid.Column>
                 </Grid>
