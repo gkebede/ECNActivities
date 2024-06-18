@@ -49,25 +49,32 @@ export default observer(App)
 //https://github1s.com/TryCatchLearn/Reactivities/blob/main/Persistence/Migrations/20221204055302_PostgresInitial.cs
 
 
-// https://github.com/TryCatchLearn/Reactivities
-
-// https://learn.microsoft.com/en-us/aspnet/core/security/authentication/customize-identity-model?view=aspnetcore-7.0
-
-
 // STEPS TO REMEMBER FOR DATA FLOW..
-// for C#
+// FOR C#
 // 1. DOMAIN (Entity Class)
 // 2. DbContext inheritance class for read and write (---Persistence---)
 // 3. Repository class if it is nessaary for instantiating data
 // 4. call the class that inherit DbContext class or use the repository class if any
 // 5. in Controller class use #4 class for manipulating the data and pass it to the View
-
-// for react
+-----------------
+// FOR react
 // 1. Model (Entity Class  ~  Entity interface )
 // 2. use axios as a DbContext to read and write 
-// 3. storeClass (spesfic class i.e. userStore ore entityStore...) for instantiating data
+// 3. storeClass (specific class i.e. userStore or entityStore...) for instantiating data
 // 4. import all the storeClasses to the store which combine all the necessary entities
-
 // 5. and use the store class  as a data source for each view
+
+PACKAGES and LIBRARIES
+-----------------
+    *** npm create vite@latest my-vue-app
+1.mobx-react-lite      ---npm install --save mobx
+2.react-toastify       ---npm install --save react-toastify
+3.react-router         ---npm install react-router@6 react-router-dom@6
+4.semantic-ui-react    ---npm install semantic-ui-react semantic-ui-css
+5.axios                ---npm install axios
+6.formik               ---npm install formik
+7.yup                  ---npm install yup   and then  npm install @types/yup --save-dev
+8.datepicker           ---npm install react-datepicker and then npm install @types/react-datepicker --save-dev
+8.datefns              ---npm install date-fns@2.16.1 (i.e the right version # by checking npm ls date-fns)
 */
 

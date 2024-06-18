@@ -10,7 +10,6 @@ import { Photo, Profile, UserActivity } from "../models/Profile";
 import { store } from "../stores/store";
 import { router } from "../router/Routes";
 import { toast } from "react-toastify";
-import { resolvePath } from "react-router-dom";
 
 
 function sleep(delay: number) {
