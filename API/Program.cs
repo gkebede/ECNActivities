@@ -1,5 +1,9 @@
 using API.Extensions;
 using API.Middleware;
+using Domain;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
@@ -11,8 +15,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(opt => 
+{ // by doing the ff every contrllers end points need Authorization unless it is [AllowAnonymous]
+    var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+    opt.Filters.Add(new AuthorizeFilter(policy));
+});
 builder.Services.AddApplicationservices(builder.Configuration);
+builder.Services.AddIdentityServices(builder.Configuration);
 
 
 var app = builder.Build();
@@ -27,10 +36,13 @@ if (app.Environment.IsDevelopment())
     
 }
 
-// app.UseAuthorization();
-app.MapControllers();
 
 app.UseCors("CorsPolicy");
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapControllers();
 
 // app.UseHttpsRedirection();
 
@@ -42,9 +54,9 @@ var servises = scope.ServiceProvider;  //from whole injected services pick desir
 try
 {   
     var context = servises.GetRequiredService<DataContext>(); // pick the right servie(DataContext) to perform the task
-    // var userManager = servises.GetRequiredService<UserManager<AppUser>>();
+    var userManager = servises.GetRequiredService<UserManager<AppUser>>();
       await context.Database.MigrateAsync();
-     await Seed.SeedData(context);
+     await Seed.SeedData(context,userManager );
 }
 catch (Exception ex)
 {

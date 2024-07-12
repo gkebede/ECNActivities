@@ -1,15 +1,13 @@
 using Application;
 using Application.Activities;
-using Application.Activities.core;
 using Domain;
-using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Persistence;
 
 namespace API.Controllers
 {
-   public class ActivitiesController : BaseApiController
+ 
+    public class ActivitiesController : BaseApiController
    {
 
       [HttpGet]
@@ -19,8 +17,9 @@ namespace API.Controllers
          return HandleResult(result);
       }
 
+       //[Authorize]
       [HttpGet("{id}")]
-      public async Task<IActionResult> GetActivity(Guid id)
+      public async Task<ActionResult> GetActivity(Guid id)
       {
         // var result = await Mediator.Send(new Details.Query { Id = id });
          return HandleResult(await Mediator.Send(new Details.Query { Id = id }));

@@ -50,21 +50,11 @@ export default observer(App)
 
 
 // STEPS TO REMEMBER FOR DATA FLOW..
-// FOR C#
-// 1. DOMAIN (Entity Class)
-// 2. DbContext inheritance class for read and write (---Persistence---)
-// 3. Repository class if it is nessaary for instantiating data
-// 4. call the class that inherit DbContext class or use the repository class if any
-// 5. in Controller class use #4 class for manipulating the data and pass it to the View
------------------
-// FOR react
-// 1. Model (Entity Class  ~  Entity interface )
-// 2. use axios as a DbContext to read and write 
-// 3. storeClass (specific class i.e. userStore or entityStore...) for instantiating data
-// 4. import all the storeClasses to the store which combine all the necessary entities
-// 5. and use the store class  as a data source for each view
 
-PACKAGES and LIBRARIES
+// Add the DOBCONTEXT, IDENTIY, ADDsCOPED TOKEN in to programe class
+
+
+PACKAGES and LIBRARIES   - react
 -----------------
     *** npm create vite@latest my-vue-app
 1.mobx-react-lite      ---npm install --save mobx
@@ -75,6 +65,23 @@ PACKAGES and LIBRARIES
 6.formik               ---npm install formik
 7.yup                  ---npm install yup   and then  npm install @types/yup --save-dev
 8.datepicker           ---npm install react-datepicker and then npm install @types/react-datepicker --save-dev
-8.datefns              ---npm install date-fns@2.16.1 (i.e the right version # by checking npm ls date-fns)
+9.datefns              ---npm install date-fns@2.16.1 (i.e the right version # by checking npm ls date-fns)
+
+
+
+//---PASSWORD GENERATOR(URL)    ---https://passwordgenerator.net/   
+
+PACKAGES and LIBRARIES   - ASP.NETCORE
+-----------------
+     1 to 6 ---to Persistence
+     7 & 8  ---to API   
+1- Microsoft.EntityFrameworkCore                        ---for Identity
+2- Microsoft.EntityFrameworkCore.Relational             ---for Relational
+3- Microsoft.EntityFrameworkCore.Design                 ---for Design
+4- Microsoft.EntityFrameworkCore.SqlServer              ---for SqlServer
+5- Microsoft.EntityFrameworkCore.Tools                  ---for Tools
+6- dotnet add package FluentValidation.AspNetCore       ---for Validation
+7- System.IdentityModel.Tokens.Jwt @Microsoft           ---for IdentityModel (to create token)
+8- Microsoft.AspNetCore.Authentication.JwtBearer        ---to Authentication User to /API/
 */
 

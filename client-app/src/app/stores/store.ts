@@ -6,17 +6,21 @@
 
 import { createContext, useContext } from "react";
 import  ActivityStore  from "./activityStore";
+import ModalStore from "./modalStore";
 
 
  interface Store {
     activityStore : ActivityStore;
     commonStore : CommonStore;
+    modalStore : ModalStore
 }
 
 // The states (value)
 export const store : Store = {
     activityStore : new ActivityStore(),
     commonStore : new CommonStore(),
+    modalStore : new ModalStore(),
+
 }
 
 // state provider (context)
