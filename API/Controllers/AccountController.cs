@@ -32,8 +32,7 @@ namespace API.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
         {
-            Console.WriteLine("Hello");
-            var user = await _userManager.FindByEmailAsync(loginDto.Email);
+             var user = await _userManager.FindByEmailAsync(loginDto.Email);
 
             if (user == null) return Unauthorized();
 
@@ -55,14 +54,14 @@ namespace API.Controllers
             {
                 if (await _userManager.Users.AnyAsync(x => x.Email == registerDto.Email))
                 {
-                    ModelState.AddModelError("email", "Email is already taken taken");
+                    ModelState.AddModelError("email", "Email is already taken");
                     return ValidationProblem();
                 }
 
                 else if (await _userManager.Users.AnyAsync(x => x.UserName == registerDto.Username))
 
                 {
-                    ModelState.AddModelError("username", "Username is already taken taken");
+                    ModelState.AddModelError("username", "Username is already taken");
                     return ValidationProblem();
                 }
 

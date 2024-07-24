@@ -15,6 +15,8 @@ namespace API.Services
         }
         public string CreateToken(AppUser user)
         {
+
+
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.UserName),
@@ -23,7 +25,6 @@ namespace API.Services
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["TokenKey"]));
-          
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
             var tokenDescriptor = new SecurityTokenDescriptor
@@ -34,7 +35,6 @@ namespace API.Services
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();
-
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
             return tokenHandler.WriteToken(token);

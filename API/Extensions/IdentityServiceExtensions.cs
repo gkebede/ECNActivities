@@ -47,7 +47,6 @@ namespace API.Extensions
             {
                 opt.TokenValidationParameters = new TokenValidationParameters
                 {
-
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = key,
                     ValidateIssuer = false,

@@ -5,6 +5,10 @@ import { observer } from "mobx-react-lite";
 import { Outlet, useLocation } from "react-router-dom";
 import HomePage from "../../features/home/HomePage";
 import { ToastContainer } from "react-toastify";
+import { useStore } from "../stores/store";
+import { useEffect } from "react";
+import LoadingComponent from "./LoadingComponent";
+import ModalContainer from "../common/modals/ModalContainer";
 
 
 
@@ -12,11 +16,19 @@ import { ToastContainer } from "react-toastify";
 
 function App() {
   const location = useLocation();
-  // const { commonStore: {token, setAppLoaded, appLoaded}, userStore: {getUser} } = useStore();
-  // const { commonStore, userStore} = useStore();
+  const { commonStore, userStore} = useStore();
 
+  useEffect(() => {
+    if(commonStore.token) {
+      userStore.getUser().finally(() => commonStore.setAppLoaded())
+    }
+  },[commonStore, userStore ]);
+
+  if(!commonStore.appLoaded) return < LoadingComponent content="Loading app..."/>
+  
   return (
     <>
+    <ModalContainer />
      <ToastContainer position="bottom-right" hideProgressBar theme="colored" />
       <NavBar />
       {location.pathname === '/' ? <HomePage />  : (
@@ -57,6 +69,9 @@ export default observer(App)
 PACKAGES and LIBRARIES   - react
 -----------------
     *** npm create vite@latest my-vue-app
+    N.B  - each JSX.Element(like App(), LoginForm(), ...) need some kind of model(modelObject) to display example check all 
+           the interfaces in side models folders && when it is necessary create a model for one component if we think we 
+           don't use it anywhere else example ModalStore class interface
 1.mobx-react-lite      ---npm install --save mobx
 2.react-toastify       ---npm install --save react-toastify
 3.react-router         ---npm install react-router@6 react-router-dom@6

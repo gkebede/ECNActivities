@@ -12,13 +12,15 @@ export default class UserStore {
     }
 
     get isLoggedIn() {
+        // casting the user object in to a Boolean as follow
         return !!this.user;
     }
 
     login = async (creds: UserFormValues) => {
         try {
             const user = await agent.Account.login(creds);
-            store.commonStore.setToken(user.token);
+           store.commonStore.setToken(user.token);
+           console.log(user);
             runInAction(() => this.user = user);
             router.navigate('/activities');
             store.modalStore.closeModal();
@@ -42,7 +44,7 @@ export default class UserStore {
 
     logout = () => {
         store.commonStore.setToken(null);
-        this.user = null;
+        this.user = null; 
         router.navigate('/');
     }
 
@@ -67,15 +69,4 @@ export default class UserStore {
         if (this.user) this.user.displayName = name;
     }
 
-    // setImage = (image: string) => {
-    //     if (this.user) this.user.image = image;
-    // }
-
-    // setUserPhoto = (url: string) => {
-    //     if (this.user) this.user.image = url;
-    // }
-
-    // setDisplayName = (name: string) => {
-    //     if (this.user) this.user.displayName = name;
-    // }
 }

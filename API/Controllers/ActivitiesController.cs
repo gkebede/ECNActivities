@@ -6,7 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
- 
+
+ [AllowAnonymous]
     public class ActivitiesController : BaseApiController
    {
 
@@ -40,6 +41,7 @@ namespace API.Controllers
           var result = await Mediator.Send(new Edit.Command { Activity = activity });
          return HandleResult(result);
       }
+
 
       [HttpDelete("{id}")]
       public async Task<IActionResult> DeleteActivity(Guid id)
