@@ -4,7 +4,6 @@ namespace API.DTOs
 {
     public class RegisterDto
     {
-        public string Email { get; set; }
         /*
         (?=.*\\d)   --- include number
         (?=.*[a-z]) --- include a to z
@@ -22,6 +21,6 @@ namespace API.DTOs
         public string Username { get; set; }
          [Required]
         [EmailAddress]
-        
+        public string Email { get; set; }
     }
 }

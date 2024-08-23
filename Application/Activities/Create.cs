@@ -1,12 +1,14 @@
 
 // using Application.Activities.core;
 // using Application.Interfaces;
-using Application.Activities.core;
+using Application.core;
+using Application.Interfaces;
 using Domain;
 using FluentValidation;
 
 // using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Persistence;
 
 namespace Application.Activities
@@ -14,17 +16,17 @@ namespace Application.Activities
     public class Create
     {
 
-        public class Command : IRequest<Result<Unit>> 
+        public class Command : IRequest<Result<Unit>>
         {
             public Activity Activity { get; set; }
         }
 
-         public class CommandValidator : AbstractValidator<Command>
+        public class CommandValidator : AbstractValidator<Command>
         {
             public CommandValidator()
             {
                 //RuleFor( x => x.Title).NotEmpty();
-               RuleFor(x => x.Activity).SetValidator(new ActivityValidator());
+                RuleFor(x => x.Activity).SetValidator(new ActivityValidator());
             }
         }
 
@@ -32,9 +34,11 @@ namespace Application.Activities
         {
 
             private readonly DataContext _context;
+            private readonly IUserAccessor _userAccessor;
 
-            public Handler(DataContext context)
+            public Handler(DataContext context, IUserAccessor userAccessor)
             {
+                _userAccessor = userAccessor;
 
                 _context = context;
 
@@ -42,25 +46,35 @@ namespace Application.Activities
 
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
+                var user = await _context.Users.SingleOrDefaultAsync(x => x.UserName == _userAccessor.GetUsername());
 
-                    //   int id = _context.Activities.Max(a => a.Id)+1;
-                    //    request.Activity.Id = id;
+                //var a = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Name);
+                //var users = await _context.Users.SingleOrDefaultAsync(x => x.UserName == a);
 
-                    _context.Activities.Add(request.Activity);
-                 
-                 var result =await _context.SaveChangesAsync() > 0;
-                 if (!result) 
-                 {
+                var attendee = new ActivityAttendee
+                {
+
+                    AppUser = user,
+                    Activity = request.Activity,
+                    IsHost = true
+                };
+                request.Activity.Attendees.Add(attendee);
+
+                _context.Activities.Add(request.Activity);
+
+                var result = await _context.SaveChangesAsync() > 0;
+                if (!result)
+                {
                     return Result<Unit>.Failure("Failed to create activity object");
-                 }
-                 return Result<Unit>.Success(Unit.Value);
+                }
+                return Result<Unit>.Success(Unit.Value);
 
 
 
                 // var user = await _context.Activities.FirstOrDefaultAsync(x =>
                 //       x. == _userAccessor.GetUsername());
 
-             
+
 
                 //     var attendee = new ActivityAttendee
                 //     {
@@ -72,7 +86,7 @@ namespace Application.Activities
                 //     };
                 //     request.Activity.Attendees.Add(attendee);
 
-           
+
 
 
 

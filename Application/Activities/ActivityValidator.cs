@@ -9,7 +9,7 @@ namespace Application.Activities
         public ActivityValidator()
         {
             
-            RuleFor( x => x.Title).NotEmpty().MinimumLength(3).MaximumLength(25);
+            RuleFor( x => x.Title);//.NotEmpty().MinimumLength(3).MaximumLength(25);
             RuleFor( x => x.Description).NotEmpty();
             RuleFor( x => x.Date).NotEmpty();
             RuleFor( x => x.Category).NotEmpty();

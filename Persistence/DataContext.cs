@@ -1,6 +1,11 @@
 ﻿using Domain;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations.Internal;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Persistence;
 
@@ -11,4 +16,55 @@ public class DataContext : IdentityDbContext<AppUser>
     {
     }
     public DbSet<Activity> Activities {get;set;}
+    public DbSet<ActivityAttendee> ActivityAttendees {get;set;}
+
+     protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            builder.Entity<ActivityAttendee>(x => x.HasKey(aa => new { aa.AppUserId, aa.ActivityId }));
+
+            builder.Entity<ActivityAttendee>()
+                .HasOne(u => u.AppUser)
+                .WithMany(u => u.Activities)
+                .HasForeignKey(aa => aa.AppUserId);
+
+            builder.Entity<ActivityAttendee>()
+                .HasOne(u => u.Activity)
+                .WithMany(u => u.Attendees)
+                .HasForeignKey(aa => aa.ActivityId);
+
+            // builder.Entity<Comment>()
+            //     .HasOne(a => a.Activity)
+            //     .WithMany(c => c.Comments)
+            //     .OnDelete(DeleteBehavior.Cascade);
+
+            // builder.Entity<UserFollowing>(b =>
+            // {
+            //     b.HasKey(k => new { k.ObserverId, k.TargetId });
+
+            //     b.HasOne(o => o.Observer)
+            //         .WithMany(f => f.Followings)
+            //         .HasForeignKey(o => o.ObserverId)
+            //         .OnDelete(DeleteBehavior.Cascade);
+            //     b.HasOne(t => t.Target)
+            //         .WithMany(f => f.Followers)
+            //         .HasForeignKey(t => t.TargetId)
+            //         .OnDelete(DeleteBehavior.Cascade);
+            // });
+        }
+
+    public class OverrideMigraton : Migration
+    {
+
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.Sql("");
+        }
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.Sql("");
+        }
+        
+    }
 }

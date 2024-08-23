@@ -98,5 +98,13 @@ PACKAGES and LIBRARIES   - ASP.NETCORE
 6- dotnet add package FluentValidation.AspNetCore       ---for Validation
 7- System.IdentityModel.Tokens.Jwt @Microsoft           ---for IdentityModel (to create token)
 8- Microsoft.AspNetCore.Authentication.JwtBearer        ---to Authentication User to /API/
+
+|
+|NB.... once you created any C# project using vsCode make sure add the project to the solution as follow
+      ... creating a project   ---      dotnet new classlib -n Infrastructure
+      ... add to the sln       ---      dotnet sln add  Infrastructure
+      and if this class need to reference any project cd to project and add the reference project as follow
+      ---C:\Users\ghail\projects\ECNActivities   cd to C:\Users\ghail\projects\ECNActivities\Infrastructure> then after 
+      ---C:\Users\ghail\projects\ECNActivities\Infrastructure>dotnet add reference ../Application
 */
 

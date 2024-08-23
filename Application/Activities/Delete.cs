@@ -1,12 +1,6 @@
-
-
-using Domain;
 using MediatR;
 using Persistence;
-using System.Threading.Tasks;
-using System.Threading;
-using System;
-using Application.Activities.core;
+using Application.core;
 
 namespace Application
 {

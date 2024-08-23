@@ -5,6 +5,8 @@ using Persistence;
 using Application.core;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Application.Interfaces;
+using Infrastructure.Security;
 
 namespace API.Extensions
 {
@@ -36,9 +38,10 @@ namespace API.Extensions
 
             //  services.AddMediatR(typeof(List.Handler));
 
-            // 
-            // services.AddHttpContextAccessor();
-            // services.AddScoped<IUserAccessor, UserAccessor>();
+            //*NB* the ff are to accesse the Repositery patern of - IUserAccessor, UserAccessor
+            // && HttpContext throgh AddHttpContextAccessor
+             services.AddHttpContextAccessor();
+             services.AddScoped<IUserAccessor, UserAccessor>();
 
 
             return services;

@@ -1,4 +1,4 @@
-using Application.Activities.core;
+using Application.core;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

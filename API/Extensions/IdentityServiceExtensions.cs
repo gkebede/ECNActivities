@@ -1,8 +1,12 @@
 using System.Text;
 using API.Services;
 using Domain;
+using Infrastructure.Security;
+
 // using Infrastructure.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+
 //using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -17,26 +21,25 @@ namespace API.Extensions
              IConfiguration config)
         {
 
-          /*
-                IdentityOptions(opt) includes --> UserOptions && -- PasswordOptions
+            /*
+                  IdentityOptions(opt) includes --> UserOptions && -- PasswordOptions
 
-                AddSignInManager<SignInManager<AppUser>>() && AddUserManager<UserManager<AppUser>>() are 
-                included when you call AddIdentity in ASP.NET Core.
-                * both SignInManager and UserManager are included when you call AddIdentity in ASP.NET Core.
-          */
-           
-           //services.AddIdentity<AppUser, IdentityRole>(opt =>
-           services.AddIdentityCore<AppUser>(opt =>
-           {
-               //opt.Password.RequiredLength =5;
-               opt.Password.RequireNonAlphanumeric = false;
-               opt.User.RequireUniqueEmail = true;
+                  AddSignInManager<SignInManager<AppUser>>() && AddUserManager<UserManager<AppUser>>() are 
+                  included when you call AddIdentity in ASP.NET Core.
+                  * both SignInManager and UserManager are included when you call AddIdentity in ASP.NET Core.
+            */
 
-           })
-           .AddEntityFrameworkStores<DataContext>()
-          .AddDefaultTokenProviders();
+            //services.AddIdentity<AppUser, IdentityRole>(opt =>
+            services.AddIdentityCore<AppUser>(opt =>
+            {
+                opt.Password.RequiredLength = 5;
+                opt.Password.RequireNonAlphanumeric = false;
+                opt.User.RequireUniqueEmail = true;
 
-           services.AddScoped<TokenService>();
+            }).AddEntityFrameworkStores<DataContext>()
+              .AddDefaultTokenProviders();
+
+            services.AddScoped<TokenService>();
 
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"]));
@@ -54,15 +57,15 @@ namespace API.Extensions
                 };
             });
 
-            //        services.AddAuthorization(opt =>
-            // {
-            //     opt.AddPolicy("IsActivityHost", policy =>
-            //     {
-            //         policy.Requirements.Add(new IsHostRequirement());
-            //     });
-            // });
-               
-            // services.AddTransient<IAuthorizationHandler, IsHostRequirementHandler>();
+            services.AddAuthorization(opt =>
+    {
+        opt.AddPolicy("IsActivityHost", policy =>
+        {
+            policy.Requirements.Add(new IsHostRequirement());
+        });
+    });
+
+            services.AddTransient<IAuthorizationHandler, IsHostRequirementHandler>();
 
             services.AddScoped<TokenService>();
 

@@ -1,4 +1,4 @@
-namespace Application.Activities.core
+namespace Application.core
 {
     public class Result<T>
     {

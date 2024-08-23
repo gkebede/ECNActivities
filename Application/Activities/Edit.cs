@@ -1,6 +1,6 @@
 // using Application.Activities.core;
 // using AutoMapper;
-using Application.Activities.core;
+using Application.core;
 using AutoMapper;
 using Domain;
 using FluentValidation;
