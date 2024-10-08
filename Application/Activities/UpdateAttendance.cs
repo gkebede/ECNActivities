@@ -9,7 +9,7 @@ namespace Application.Activities
 {
     public class UpdateAttendance
     {
-       // MediatR.Unit type  if the type is Unit === no return 
+        // MediatR.Unit type ~ if the type is Unit === no return 
         public class Command : IRequest<Result<Unit>>
         {
             public Guid Id { get; set; }
@@ -27,7 +27,7 @@ namespace Application.Activities
 
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
-              // "CHECK THE LINK TO KNOW MORE Users i.e. (_context.Users) property "  https://www.codeproject.com/Articles/121096/Web-Server-and-ASP-NET-Application-Life-Cycle-in-D
+                // "CHECK THE LINK TO KNOW MORE Users i.e. (_context.Users) property "  https://www.codeproject.com/Articles/121096/Web-Server-and-ASP-NET-Application-Life-Cycle-in-D
                 var activity = await _context.Activities
                     .Include(a => a.Attendees).ThenInclude(u => u.AppUser)
                     .SingleOrDefaultAsync(x => x.Id == request.Id);
@@ -41,13 +41,14 @@ namespace Application.Activities
 
                 if (user == null) return null;
 
+
                 var hostUsername = activity.Attendees.FirstOrDefault(x => x.IsHost)?.AppUser.UserName;
 
                 var attendance = activity.Attendees.FirstOrDefault(x => x.AppUser.UserName == user.UserName);
                 //host User (attendance)
                 if (attendance != null && hostUsername == user.UserName)
                     activity.IsCancelled = !activity.IsCancelled;
-               //  normalUser(attendance)   -- not host
+                //  normalUser(attendance)   -- not host
                 if (attendance != null && hostUsername != user.UserName)
                     activity.Attendees.Remove(attendance);
 
@@ -57,7 +58,7 @@ namespace Application.Activities
                     {
                         AppUser = user,
                         Activity = activity,
-                        //b/c it a normal user IsHost = false
+                        //b/c it a normal/not a host user ~ IsHost = false
                         IsHost = false
                     };
 

@@ -1,7 +1,9 @@
 
+using Domain;
+
 namespace Application.Profiles
 {
-    public class Profile
+    public class Profile    //! UserDto
     {
         public string Username { get; set; }
         public string DisplayName { get; set; }
@@ -10,6 +12,7 @@ namespace Application.Profiles
         //public bool Following { get; set; }
         //public int FollowersCount { get; set; }
         //public int FollowingCount { get; set; }
-       // public ICollection<Photo> Photos { get; set; }
+     public ICollection<Photo> Photos { get; set; } = new List<Photo>();
+
     }
 }

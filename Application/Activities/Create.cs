@@ -47,13 +47,12 @@ namespace Application.Activities
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
                 var user = await _context.Users.SingleOrDefaultAsync(x => x.UserName == _userAccessor.GetUsername());
-
                 //var a = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Name);
                 //var users = await _context.Users.SingleOrDefaultAsync(x => x.UserName == a);
 
                 var attendee = new ActivityAttendee
+                
                 {
-
                     AppUser = user,
                     Activity = request.Activity,
                     IsHost = true
@@ -68,40 +67,6 @@ namespace Application.Activities
                     return Result<Unit>.Failure("Failed to create activity object");
                 }
                 return Result<Unit>.Success(Unit.Value);
-
-
-
-                // var user = await _context.Activities.FirstOrDefaultAsync(x =>
-                //       x. == _userAccessor.GetUsername());
-
-
-
-                //     var attendee = new ActivityAttendee
-                //     {
-
-                //         AppUser = user,
-                //         Activity = request.Activity,
-                //         IsHost = true
-
-                //     };
-                //     request.Activity.Attendees.Add(attendee);
-
-
-
-
-
-                // await _context.Activities.AddAsync(request.Activity);
-
-                // var result = await _context.SaveChangesAsync() > 0;
-
-                // if (!result)
-                // {
-                //     return 
-                //     Unit>.Failure("Failed to create activity");
-                // }
-
-                // return 
-                // Unit>.Success(Unit.Value);
             }
         }
     }

@@ -2,7 +2,7 @@
  import CommonStore from "./commonStore";
 // import ModalStore from "./modalStore";
 // import UserStore from "./userStore";
-// import ProfileStore from "./ProfileStore";
+ import ProfileStore from "./ProfileStore";
 
 import { createContext, useContext } from "react";
 import  ActivityStore  from "./activityStore";
@@ -14,7 +14,8 @@ import UserStore from "./userStore";
     activityStore : ActivityStore;
     commonStore : CommonStore;
     modalStore : ModalStore;
-    userStore : UserStore
+    userStore : UserStore;
+    profileStore : ProfileStore;
 }
 
 // The states (value)
@@ -23,6 +24,7 @@ export const store : Store = {
     commonStore : new CommonStore(),
     modalStore : new ModalStore(),
     userStore : new UserStore(),
+    profileStore : new ProfileStore(),
 
 }
 

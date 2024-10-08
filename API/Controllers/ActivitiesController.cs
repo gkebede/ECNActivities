@@ -56,13 +56,6 @@ namespace API.Controllers
         {
             return HandleResult(await Mediator.Send(new UpdateAttendance.Command { Id = id }));
         }
-        
-
-      //  [HttpGet("{notaguid}")]
-      //   public IActionResult GetNotAguid(Guid notaguid)
-      //   {
-      //       return BadRequest("The guidId is not right");
-      //   }
 
    }
 }
