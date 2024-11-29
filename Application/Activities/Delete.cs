@@ -1,12 +1,6 @@
-
-
-using Domain;
 using MediatR;
 using Persistence;
-using System.Threading.Tasks;
-using System.Threading;
-using System;
-using Application.Activities.core;
+using Application.core;
 
 namespace Application
 {
@@ -31,12 +25,8 @@ namespace Application
             {
                 var activity = await _context.Activities.FindAsync(request.Id);
 
-                    if(activity == null)
-                    {
-                        return null;
-                    }
-                 
-
+                    //if(activity == null)return null;
+                        
                    _context.Remove(activity);
 
                    var result = await  _context.SaveChangesAsync()  > 0;

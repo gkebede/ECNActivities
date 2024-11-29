@@ -1,167 +1,58 @@
-/*
-import { Fragment, useEffect } from 'react';
-import { Container } from 'semantic-ui-react';
-
-
-import '../layout/styles.css';
-import NavBar from './NavBar';
-import { observer } from 'mobx-react-lite';
-import { Outlet, useLocation } from 'react-router-dom';
-import HomePage from '../../features/home/HomePage';
-import { ToastContainer } from 'react-toastify';
-import { useStore } from '../stores/store';
-// import CommonStore from '../stores/commonStore';
-import LoadingComponent from './LoadingComponent';  */
-// import ModalContainer from '../common/modals/ModalContainer';
-
-
-import { useEffect, useState } from "react";
 import { Container } from "semantic-ui-react";
-import { Activity } from "../models/activity";
-import NavBar from "./NavBar";
-import ActivityDashboard from "../../features/activities/dashboard/ActivitiesDashboard";
-import agent from '../api/agent';
-import LoadingComponent from './LoadingComponent'; 
 
-import {v4 as uuid} from 'uuid';
+import NavBar from "./NavBar";
+import { observer } from "mobx-react-lite";
+import { Outlet, useLocation } from "react-router-dom";
+import HomePage from "../../features/home/HomePage";
+import { ToastContainer } from "react-toastify";
+import { useStore } from "../stores/store";
+import { useEffect } from "react";
+import LoadingComponent from "./LoadingComponent";
+import ModalContainer from "../common/modals/ModalContainer";
+
 
 
 // to get more idea about Generics look ERROR HANDLING
 
-export default function App() {
+function App() {
+  const location = useLocation();
+  const { commonStore, userStore } = useStore();
 
- const [activities, setActivities] = useState<Activity[]>([])
- const [selectActivity, setSelectActivity] = useState<Activity | undefined>(undefined)
+  useEffect(() => {
+    if (commonStore.token) {
+      userStore.getUser().finally(() => commonStore.setAppLoaded())
+    }
+  }, [commonStore, userStore]);
 
- // true | false variables
- const [editMode, setEditMode] = useState(false)
- const [loading, setLoading] = useState(true)
- const [submitting, setSubmitting] = useState(false)
+  if (!commonStore.appLoaded) return < LoadingComponent content="Loading app..." />
 
- // const location = useLocation();
- // const { commonStore: {token, setAppLoaded, appLoaded}, userStore: {getUser} } = useStore();
- // const { commonStore, userStore} = useStore();
-
- useEffect(()=> {
-   agent.Activities.list().then(response =>
-       {
-         let activities : Activity[] =[]
-           response.map( activity =>{
-            activity.date = activity.date.split('T')[0]
-            activities.push(activity)
-
-          })
-         
-        setActivities(activities)
-        setLoading(false)
-       });
-//   axios.get('http://localhost:5000/api/activities')
-//        .then(response => setActivities(response.data))
- }, [])
-
- function handleSelecteActivity(id: string){
-    
-   agent.Activities.details(id).then(response => {
-     // setSelectActivity(activities.find(x => x.id === id));
-      setSelectActivity(response);
-   })
- 
- }
- 
-
- function handleCanceleActivity(){
-  setSelectActivity(undefined);
- }
-
- function handleFormOpen(id?: string){
-    id ? handleSelecteActivity(id) : handleCanceleActivity;
-    setEditMode(true);
- }
-
- function handleFormClose(){
-  setEditMode(false);
+  return (
+    <>
+      <ModalContainer />
+      <ToastContainer position="bottom-right" hideProgressBar theme="colored" />
+      <NavBar />
+      {location.pathname === '/' ? <HomePage /> : (
+        <>
+          <Container style={{ marginTop: '6em' }}>
+            <Outlet />       {/*  Outlet === App and its children[]  */}
+          </Container>
+        </>
+      )}
+    </>
+  )
 }
 
-function handleCreateOrEditActivity(activity: Activity) {
 
-   setSubmitting(true);
-  if(activity.id) {
-    agent.Activities.update(activity).then(() => {
-      setActivities([...activities.filter(x=> x.id !== activity.id), activity]) 
-      setSelectActivity(activity)
-      setEditMode(false);
-      setSubmitting(false)
-    })
-  }else {
-    activity.id = uuid();
-    agent.Activities.create(activity).then(() => {
-      setActivities([...activities, activity]) 
-      setSelectActivity(activity)
-       setEditMode(false);
-       setSubmitting(false)
-    })
-  }
- 
+export default observer(App)
 
-}
-
-function handleDeleteActivity(id: string) {
-  setSubmitting(true);
-    agent.Activities.delete(id).then(() => {
-      //setActivities([...activities.filter(x=> x.id !== id)]) 
-      setActivities([...activities.filter(x=> x.id !== id)])
-  setSubmitting(false);
-       
-    })
-   
-}
-
-if(loading) return <LoadingComponent content="Loading App" size='massive'  />
-
- return(
-  
-   <>
-    <NavBar openForm={handleFormOpen}  />
-
-    <Container style={{ marginTop: '6em'}}>
-     <ActivityDashboard
-      activities={activities}
-      selectedActivity={selectActivity}
-      selectActivity = {handleSelecteActivity} 
-      canceleActivity = {handleCanceleActivity}
-      openForm = {handleFormOpen}
-      closeForm = {handleFormClose}
-      createOrEdit = {handleCreateOrEditActivity}
-      deleteActivity = {handleDeleteActivity}
-      // true | false variables
-      submitting ={submitting}
-      editMode= {editMode}
-       />
-    </Container>
-
-   </>
- )
-
-  
-}
-
-//selectedActivity??: This uses the nullish coalescing operator (??), which checks if the value of selectedActivity is null or undefined. If it is either of these, it evaluates to the expression 
-// Example  ===  const activity = selectedActivity?? "Default Activity";
-//selectedActivity?: This uses optional chaining (?) and is typically used when accessing properties of potentially nullable objects. For instance:
-// Example  ===  const activityName = selectedActivity?.name;
 
 
 //1/ ---COMPONENTS start HERE-----
+
+// dotnet watch --no-hot-reload
 // NavBar  => App
-// => App => ActivityDashboard } -ActivityList , ActivityDetails, ActivityForm
+// => App => ActivityDashboard } -ActivityList , ActivityListItem, ActivityForm
 //1/ ----COMPONENTS end HERE-----
-
-//font-size: clamp(1rem, 1.25vw, 1.25rem)
-
-// App -> ActivityDashboard -> ActivityList  -> ActivityDetails
-
-//Activity --under domain for C# class
-//models/Activity  interface in under clinet-app
 
 
 // TO GET THE SOURCE CODE USE THE FOLLOWING GIT URL ADRESS
@@ -169,26 +60,53 @@ if(loading) return <LoadingComponent content="Loading App" size='massive'  />
 
 //https://github1s.com/TryCatchLearn/Reactivities/blob/main/Persistence/Migrations/20221204055302_PostgresInitial.cs
 
+//? 1 st Install Better Comments  and then the code below
+// ! "=1.../** abc*/  =2...// !PACKAGES    =3...// todo: npm create    =4...//?"
+/**  STEPS TO REMEMBER FOR DATA FLOW.. */  
+ 
+// Add the DOBCONTEXT, IDENTIY, ADDsCOPED TOKEN in to programe class
 
-// https://github.com/TryCatchLearn/Reactivities
+// !PACKAGES and LIBRARIES   - react
+ 
+// todo   *** npm create vite@latest my-vue-app
+//?    N.B  - each JSX.Element(like App(), LoginForm(), ...) need some kind of model(modelObject) to display example check all
+//            the interfaces in side models folders && when it is necessary create a model for one component if we think we
+//            don't use it anywhere else example ModalStore class interface
+// 1.mobx-react-lite      ---npm install --save mobx
+// 2.react-toastify       ---npm install --save react-toastify
+// 3.react-router         ---npm install react-router@6 react-router-dom@6
+// 4.semantic-ui-react    ---npm install semantic-ui-react semantic-ui-css
+// 5.axios                ---npm install axios
+// 6.formik               ---npm install formik
+// 7.yup                  ---npm install yup   and then  npm install @types/yup --save-dev
+// 8.datepicker           ---npm install react-datepicker and then npm install @types/react-datepicker --save-dev
+// 9.datefns              ---npm install date-fns@2.16.1 (i.e the right version # by checking npm ls date-fns)
 
-// https://learn.microsoft.com/en-us/aspnet/core/security/authentication/customize-identity-model?view=aspnetcore-7.0
 
 
-// STEPS TO REMEMBER FOR DATA FLOW..
-    // for C#
-// 1. DOMAIN (Entity Class)
-// 2. DbContext inheritance class for read and write (---Persistence---)
-// 3. Repository class if it is nessaary for instantiating data
-// 4. call the class that inherit DbContext class or use the repository class if any
-// 5. in Controller class use #4 class for manipulating the data and pass it to the View
+//?--PASSWORD GENERATOR(URL)    ---https://passwordgenerator.net/
 
-// for react
-// 1. Model (Entity Class  ~  Entity interface )
-// 2. use axios as a DbContext to read and write 
-// 3. storeClass (spesfic class i.e. userStore ore entityStore...) for instantiating data
-// 4. import all the storeClasses to the store which combine all the necessary entities
+//! PACKAGES and LIBRARIES   - ASP.NETCORE
+// -----------------
+//      1 to 6 ---to Persistence
+//      7 & 8  ---to API
+// 1- Microsoft.EntityFrameworkCore                        ---for Identity
+// 2- Microsoft.EntityFrameworkCore.Relational             ---for Relational
+// 3- Microsoft.EntityFrameworkCore.Design                 ---for Design
+// 4- Microsoft.EntityFrameworkCore.SqlServer              ---for SqlServer
+// 5- Microsoft.EntityFrameworkCore.Tools                  ---for Tools
+// 6- dotnet add package FluentValidation.AspNetCore       ---for Validation
+// 7- System.IdentityModel.Tokens.Jwt @Microsoft           ---for IdentityModel (to create token)
+// 8- Microsoft.AspNetCore.Authentication.JwtBearer        ---to Authentication User to /API/
+// 9- install CloudinaryDotNet         
+//
 
-// 5. and use the store class  as a data source for each view
+// |
+// |NB.... once you created any C# project using vsCode make sure add the project to the solution as follow
+//       ... creating a project   ---      dotnet new classlib -n Infrastructure
+//       ... add to the sln       ---      dotnet sln add  Infrastructure
+//       and if this class need to reference any project cd to project and add the reference project as follow
+//       ---C:\Users\ghail\projects\ECNActivities   cd to C:\Users\ghail\projects\ECNActivities\Infrastructure> then after
+//       ---C:\Users\ghail\projects\ECNActivities\Infrastructure>dotnet add reference ../Application
 
 

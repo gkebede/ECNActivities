@@ -1,13 +1,13 @@
 using Application.Activities;
-// using Application.Activities.core;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
-// using FluentValidation;
-// using FluentValidation.AspNetCore;
-// using Application.Interfaces;
-// using Infrastructure.Security;
+
 using Application.core;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using Application.Interfaces;
+using Infrastructure.Security;
+using Infrastructure.Photos;
 
 namespace API.Extensions
 {
@@ -33,15 +33,18 @@ namespace API.Extensions
             });
 
             services.AddMediatR(config => config.RegisterServicesFromAssemblies(typeof(List.Handler).Assembly));
-           services.AddAutoMapper(typeof(MappingProfiles).Assembly);
+            services.AddAutoMapper(typeof(MappingProfiles).Assembly);
+            services.AddFluentValidationAutoValidation();
+            services.AddValidatorsFromAssemblyContaining<Create>();
 
+            //  services.AddMediatR(typeof(List.Handler));
 
-             //services.AddMediatR(typeof(List.Handler));
-             services.AddAutoMapper(typeof(MappingProfiles).Assembly);
-            // services.AddFluentValidationAutoValidation();
-            // services.AddValidatorsFromAssemblyContaining<Create>();
-            // services.AddHttpContextAccessor();
-            // services.AddScoped<IUserAccessor, UserAccessor>();
+            //*NB* the ff are to accesse the Repositery patern of - IUserAccessor, UserAccessor
+            // && HttpContext throgh AddHttpContextAccessor
+             services.AddHttpContextAccessor();
+             services.AddScoped<IUserAccessor, UserAccessor>();
+             services.AddScoped<IPhotoAccessor, PhotoAccessor>();
+             services.Configure<CloudinarySettings>(config.GetSection("Cloudinary"));
 
 
             return services;

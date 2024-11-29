@@ -1,57 +1,59 @@
-using Domain;
+using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 // using AutoMapper;
-// using AutoMapper.QueryableExtensions;
+using AutoMapper.QueryableExtensions;
+using Application.core;
 // Application\Activities\ActivityDto.cs
 namespace Application.Activities
 {
     public class List
     {
 
-        public class Query : IRequest<List<Activity>> { }
-        // public record Query() : IRequest<Result<List<Activity>>> {}
+        public class Query : IRequest<Result<List<ActivityDto>>> { }
+        // public record Query() : IRequest<Result<List<ActivityDto>>> {}
 
-        public class Handler : IRequestHandler<Query, List<Activity>>
+        public class Handler : IRequestHandler<Query, Result<List<ActivityDto>>>
         {
 
 
             private readonly DataContext _context;
-           // private readonly IMapper _mapper;
+            private readonly IMapper _mapper;
 
-            public Handler(DataContext context)
+            public Handler(DataContext context, IMapper mapper)
             {
                 _context = context;
-                //    , IMapper mapper _mapper = mapper;
+                _mapper = mapper;
 
             }
 
 
 
-            public async Task<List<Activity>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<List<ActivityDto>>> Handle(Query request, CancellationToken cancellationToken)
             {
+                /*
+               var activities = await _context.Activities
+               .Include(a => a.Attendees)
+               .ThenInclude(u => u.AppUser)
+               .ToListAsync(cancellationToken); 
+               var ActivitiesToReturn = _mapper.Map<List<ActivityDto>>(activities);
+               return Result<List<ActivityDto>>.Success(ActivitiesToReturn);
+               */
 
 
-               return await _context.Activities.ToListAsync();  
 
+                // THIS EAGER LOADING ---it is costy b/c it includes the ff:
+                //-Access Failed, 
+                //-count a concurrency stamp,  
+                //-the lock out enabled ... and, etc  thus we use Projection (I.E. INHERETED FROM mapping)
+ 
 
-
-                // THIS EAGER LOADING ---
-
-                // var activities = await _context.Activities
-                //  .Include(aa => aa.Attendees)
-                //  .ThenInclude( u => u.AppUser)
-                // .ToListAsync(cancellationToken);
-                // var activitiesReturn = _mapper.Map<List<ActivityDto>>(activities);
-
-                // return Result<List<ActivityDto>>.Success(activitiesReturn);
-
-              // THIS PROJECTION (I.E. INHERETED FROM mapping --- instead of using long method like about---) LOADING ---
-              //  var activities = await _context.Activities
-               // .ProjectTo<Activity>(_mapper.ConfigurationProvider)
-               // .ToListAsync(cancellationToken);
-              //  return List<ActivityDto>.Success(activities);
+               var activities = await _context.Activities
+               //ProjectTo  === using AutoMapper.QueryableExtensions;
+               .ProjectTo<ActivityDto>(_mapper.ConfigurationProvider)
+               .ToListAsync(cancellationToken);
+               return Result<List<ActivityDto>>.Success(activities);
 
             }
         }

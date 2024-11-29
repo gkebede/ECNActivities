@@ -1,6 +1,6 @@
 import { User } from "./users";
 
-export interface Profile {
+export interface IProfile {
     username: string;
     displayName: string;
     image?: string;
@@ -11,12 +11,28 @@ export interface Profile {
     photos?: Photo[]
 }
 
-export class Profile implements Profile {
-    constructor(user: User) {
-        this.username = user.username;
-        this.displayName = user.displayName;
-        this.image = user.image
+
+//! this is to initialize the user in the activityStore using the updateAttendeance method, along with any other
+export class Profile implements IProfile {
+    username: string;
+    displayName: string;
+    image?: string | undefined;
+    bio?: string | undefined;
+    followersCount: number;
+    followingCount: number;
+    following: boolean;
+    photos?: Photo[] | undefined;
+    constructor({username, displayName, image}: User) {
+        //constructor({username, displayName, image}: User)
+        this.username = username;
+        this.displayName = displayName;
+        this.image = image;
+        this.followersCount = 0;
+        this.followingCount =0;
+        this.following = false;
+        this.photos = undefined
     }
+   
 }
 
 export interface Photo {

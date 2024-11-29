@@ -7,7 +7,8 @@ import * as Yup from 'yup';
 import ValidationError from "../errors/ValidationError";
 
 export default observer(function RegsiterForm() {
-    const { userStore   } = useStore();
+    const { userStore } = useStore();
+
     return (
         <Formik
             initialValues={{ displayName: '', username: '', email: '', password: '', error: null }}
@@ -18,7 +19,7 @@ export default observer(function RegsiterForm() {
                 username: Yup.string().required(),
                 email: Yup.string().email("Please enter a valid email").required(),
                 password: Yup.string().required(),
-                
+
             })}
         >
             {({ handleSubmit, isSubmitting, errors, isValid, dirty }) => (
@@ -28,13 +29,13 @@ export default observer(function RegsiterForm() {
                     <MyTextInput placeholder="Username" name='username' />
                     <MyTextInput placeholder="Email" name='email' />
                     <MyTextInput placeholder="Password" name='password' type='password' />
-                     <ErrorMessage name='error' render={() => 
-                        <ValidationError errors={errors.error} />} />  
+                    <ErrorMessage name='error' render={() =>
+                        <ValidationError errors={errors.error as unknown as string[]} />} />
                     <Button
-                        disabled={!isValid || !dirty || isSubmitting} 
-                        loading={isSubmitting} 
-                        positive content='Register' 
-                        type="submit" fluid 
+                        disabled={!isValid || !dirty || isSubmitting}
+                        loading={isSubmitting}
+                        positive content='Register'
+                        type="submit" fluid
                     />
                 </Form>
             )}

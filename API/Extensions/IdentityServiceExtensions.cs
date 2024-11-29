@@ -1,69 +1,76 @@
-// using System.Text;
-// using API.Services;
-// using Domain;
-// // using Infrastructure.Security;
-// // using Microsoft.AspNetCore.Authentication.JwtBearer;
-// using Microsoft.AspNetCore.Authorization;
-// using Microsoft.AspNetCore.Identity;
-// using Microsoft.IdentityModel.Tokens;
-// using Persistence;
+using System.Text;
+using API.Services;
+using Domain;
+using Infrastructure.Security;
 
-// namespace API.Extensions
-// {
-//     public static class IdentityServiceExtensions
-//     {
+// using Infrastructure.Security;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 
-//         public static IServiceCollection AddIdentityServices(this IServiceCollection services,
-//              IConfiguration config)
-//         {
+//using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
+using Persistence;
 
-//           /*
-//                 IdentityOptions(opt) includes --> UserOptions && -- PasswordOptions
+namespace API.Extensions
+{
+    public static class IdentityServiceExtensions
+    {
 
-//                 AddSignInManager<SignInManager<AppUser>>() && AddUserManager<UserManager<AppUser>>() are included when you call AddIdentity in ASP.NET Core.
-//                 * both SignInManager and UserManager are included when you call AddIdentity in ASP.NET Core.
-//           */
+        public static IServiceCollection AddIdentityServices(this IServiceCollection services,
+             IConfiguration config)
+        {
 
-//            services.AddIdentity<AppUser, IdentityRole>(opt =>
-//            {
-             
-//                opt.Password.RequireNonAlphanumeric = false;
-//                opt.User.RequireUniqueEmail = true;
+            /*
+                  IdentityOptions(opt) includes --> UserOptions && -- PasswordOptions
 
-//            })
-//            .AddEntityFrameworkStores<DataContext>()
-//            .AddDefaultTokenProviders();
+                  AddSignInManager<SignInManager<AppUser>>() && AddUserManager<UserManager<AppUser>>() are 
+                  included when you call AddIdentity in ASP.NET Core.
+                  * both SignInManager and UserManager are included when you call AddIdentity in ASP.NET Core.
+            */
+
+            //services.AddIdentity<AppUser, IdentityRole>(opt =>
+            services.AddIdentityCore<AppUser>(opt =>
+            {
+                opt.Password.RequiredLength = 5;
+                opt.Password.RequireNonAlphanumeric = false;
+                opt.User.RequireUniqueEmail = true;
+
+            }).AddEntityFrameworkStores<DataContext>()
+              .AddDefaultTokenProviders();
+
+            services.AddScoped<TokenService>();
 
 
-//             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("TokenKey"));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"]));
 
 
-//             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-//             .AddJwtBearer(opt =>
-//             {
-//                 opt.TokenValidationParameters = new TokenValidationParameters
-//                 {
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(opt =>
+            {
+                opt.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = key,
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                };
+            });
 
-//                     ValidateIssuerSigningKey = true,
-//                     IssuerSigningKey = key,
-//                     ValidateIssuer = false,
-//                     ValidateAudience = false,
-//                 };
-//             });
+            services.AddAuthorization(opt =>
+    {
+        opt.AddPolicy("IsActivityHost", policy =>
+        {
+            policy.Requirements.Add(new IsHostRequirement());
+        });
+    });
 
-//                    services.AddAuthorization(opt =>
-//             {
-//                 opt.AddPolicy("IsActivityHost", policy =>
-//                 {
-//                     policy.Requirements.Add(new IsHostRequirement());
-//                 });
-//             });
-               
-//             services.AddTransient<IAuthorizationHandler, IsHostRequirementHandler>();
-//             services.AddScoped<TokenService>();
+            services.AddTransient<IAuthorizationHandler, IsHostRequirementHandler>();
 
-//             return services;
-//         }
+            services.AddScoped<TokenService>();
 
-//     }
-// }
+            return services;
+        }
+
+    }
+}
